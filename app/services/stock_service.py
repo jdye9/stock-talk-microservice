@@ -23,7 +23,8 @@ def get_stock_history(tickers: List[str], period: str = "5d", interval: str = "1
     for ticker in tickers:
         try:
             stock = yf.Ticker(ticker)
-            data = stock.history(period=period, interval=interval)
+            data = stock.history(
+                period=period, interval=interval, auto_adjust=False)
 
             if data.empty:
                 result[ticker] = {"error": "No data found"}
@@ -38,7 +39,7 @@ def get_stock_history(tickers: List[str], period: str = "5d", interval: str = "1
             else:
                 raise ValueError("No valid date/time column found")
 
-            result[ticker] = data[[date_col, "Open", "Close",
+            result[ticker] = data[[date_col, "Open", "Close", "Adj Close",
                                    "Low", "High", "Volume"]].to_dict(orient="records")
         except Exception as e:
             result[ticker] = {"error": str(e)}
