@@ -3,18 +3,23 @@ import yfinance as yf
 from typing import Any, Dict, List
 
 
-def get_stock_price(tickers: list[str]) -> dict[str, float]:
-    prices = {}
+def get_stock_price(tickers: list[str]) -> dict[str, dict]:
+    results = {}
+
     for ticker in tickers:
         try:
             stock = yf.Ticker(ticker)
-            prices[ticker] = stock.fast_info['lastPrice']
+            current_price = stock.fast_info['lastPrice']
+
+            results[ticker] = {
+                "current_price": current_price,
+            }
         except Exception as e:
-            prices[ticker] = f"Error: {str(e)}"
-    return {
-        "tickers": tickers,
-        "prices": prices
-    }
+            results[ticker] = {
+                "error": str(e)
+            }
+
+    return results
 
 
 def get_stock_history(tickers: List[str], period: str = "5d", interval: str = "1d") -> Dict[str, Any]:
